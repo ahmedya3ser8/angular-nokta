@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+body {
+  direction: rtl;
+  font-family: "Cairo", sans-serif;
+}
+
+@layer components {
+  .container {
+    @apply max-w-6xl! mx-auto px-5 md:px-10;
+  }
+  .btn-primary {
+    @apply w-full rounded-xl bg-rose-800 px-4 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:bg-rose-900 cursor-pointer;
+  }
+  .floating-label-group {
+    @apply relative;
+  }
+  .floating-input {
+    @apply w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm text-gray-900 outline-none transition-all duration-300 focus:border-rose-500 focus:bg-white focus:ring-4 focus:ring-rose-500/10;
+  }
+  .floating-label {
+    @apply pointer-events-none absolute inset-s-3 top-1/2 -translate-y-1/2 bg-transparent px-1 text-sm text-gray-700 transition-all duration-300;
+  }
+  .floating-input:focus + .floating-label,
+  .floating-input:not(:placeholder-shown) + .floating-label {
+    @apply top-0 -translate-y-1/2 bg-white text-xs;
+  }
+}

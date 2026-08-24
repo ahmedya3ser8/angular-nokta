@@ -1,0 +1,51 @@
+<section class="bg-rose-50 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md rounded-2xl bg-white shadow-xl shadow-rose-950/5">
+    <div class="p-5 flex flex-col items-center bg-linear-to-b from-rose-50 to-white">
+      <div class="size-14 rounded-full flex items-center justify-center text-2xl bg-amber-100 shadow-sm">👋</div>
+      <h1 class="text-[22px] font-extrabold text-gray-900 mt-4 mb-2">
+        أهلاً بيك تاني
+      </h1>
+      <p class="text-sm max-w-sm leading-6 text-gray-500">
+        سجّل دخولك عشان تكمل متابعة نقوطك
+      </p>
+    </div>
+    <div class="space-y-5 p-5">
+      <form [formGroup]="form" (ngSubmit)="submitForm()" class="flex flex-col gap-5">
+        <div class="space-y-2">
+          <div class="floating-label-group">
+            <input type="email" formControlName="email" id="email" class="floating-input" placeholder=" " />
+            <label for="email" class="floating-label"> البريد الإلكتروني </label>
+          </div>
+          @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+            <p class="text-sm text-red-500"> البريد الإلكتروني مطلوب </p>
+          }
+          @else if (form.get('email')?.hasError('email')) {
+            <p class="text-sm text-red-500"> من فضلك أدخل بريدًا إلكترونيًا صحيحًا </p>
+          }
+        </div>
+        <div class="space-y-2">
+          <div class="floating-label-group">
+            <input type="password" formControlName="password" id="password" class="floating-input" placeholder=" " />
+            <label for="password" class="floating-label"> كلمة المرور </label>
+          </div>
+          @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+            <p class="text-sm text-red-500"> كلمة المرور مطلوبة </p>
+          }
+        </div>
+        <button type="submit" [disabled]="isLoading" [class.opacity-70]="isLoading" [class.cursor-not-allowed]="isLoading" class="btn-primary">
+          @if (isLoading) {
+            جاري تسجيل الدخول...
+          } @else {
+            تسجيل الدخول
+          }
+        </button>
+      </form>
+      <p class="text-center text-sm text-gray-500">
+        ليس لديك حساب ؟
+        <a routerLink="/auth/signup" class="font-semibold text-rose-600 transition hover:text-rose-700 hover:underline">
+          إنشاء حساب
+        </a>
+      </p>
+    </div>
+  </div>
+</section>

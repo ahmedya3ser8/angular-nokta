@@ -1,0 +1,90 @@
+<div class="min-h-screen bg-rose-50 flex justify-center items-center">
+  <div class="container">
+
+    <div class="bg-white border-b border-gray-100 shadow-xl shadow-rose-950/5 rounded-2xl p-5 space-y-6">
+      <!-- top header -->
+      <div class="flex items-center gap-3">
+        <button routerLink="/nokta" class="size-9 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6" transform="rotate(180 12 12)"/>
+          </svg>
+        </button>
+        <span> تفاصيل الشخص </span>
+      </div>
+      <!-- person header -->
+      <div class="flex items-center gap-4">
+        <div class="size-14 rounded-full bg-rose-100 flex items-center justify-center text-rose-700 font-extrabold text-2xl">
+          {{ noktas[0].person.name[0] }}
+        </div>
+        <div class="space-y-1">
+          <h1 class="text-xl font-extrabold text-gray-900">
+            {{ noktas[0].person.name }}
+          </h1>
+          <p class="text-sm text-gray-500">
+              {{ noktas.length || 0 }} نقطة مسجّلة
+          </p>
+        </div>
+      </div>
+      <!-- summary cards -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="rounded-2xl bg-white p-4 shadow-lg shadow-rose-950/5 space-y-1">
+          <p class="text-xs text-gray-400"> قبضتها منه </p>
+          <p class="text-lg font-extrabold text-emerald-700"> {{ totalReceived() }} ج.م </p>
+        </div>
+        <div class="rounded-2xl bg-white p-4 shadow-lg shadow-rose-950/5 space-y-1">
+          <p class="text-xs text-gray-400"> ادّيتها له </p>
+          <p class="text-lg font-extrabold text-rose-800"> {{ totalGiven() }} ج.م </p>
+        </div>
+        <div class="rounded-2xl bg-white p-4 shadow-lg shadow-rose-950/5 space-y-1">
+          <p class="text-xs text-gray-400"> الصافي </p>
+          <p class="text-lg font-extrabold" [class.text-emerald-700]="netBalance() >= 0" [class.text-rose-800]="netBalance() < 0">
+            {{ netBalance() }} ج.م
+          </p>
+        </div>
+      </div>
+      <!-- history -->
+      <div class="space-y-4">
+        <h3 class="font-bold text-gray-900 text-sm"> السجل </h3>
+        <div class="divide-y divide-gray-100 flex flex-col gap-5">
+          @for (nokta of noktas; track nokta._id) {
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="size-9 rounded-full flex items-center justify-center" [class.bg-emerald-50]="nokta.transactionType === 'received'" [class.bg-rose-50]="nokta.transactionType === 'given'">
+                  @if (nokta.transactionType === 'received') {
+                    <svg class="size-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                  } @else {
+                    <svg class="size-4 text-rose-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <path d="M12 19V5M5 12l7-7 7 7"/>
+                    </svg>
+                  }
+                </div>
+                <div class="space-y-1">
+                  <p class="text-sm font-bold text-gray-900">
+                    @if (nokta.occasionType === 'wedding') {
+                      فرح
+                    } @else if (nokta.occasionType === 'engagement') {
+                      خطوبة
+                    } @else if (nokta.occasionType === 'birthday') {
+                      عيد ميلاد
+                    } @else {
+                      مناسبة تانية
+                    }
+                  </p>
+                  <p class="text-xs text-gray-400">
+                    {{ nokta.date | date:'d MMMM yyyy':'':'ar-EG' }}
+                  </p>
+                </div>
+              </div>
+              <p class="font-extrabold text-sm" [class.text-emerald-700]="nokta.transactionType === 'received'" [class.text-rose-800]="nokta.transactionType === 'given'">
+                {{ nokta.transactionType === 'received' ? '+' : '-' }}{{ nokta.amount }} ج.م
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
