@@ -1,5 +1,6 @@
 export const APP_CONSTANTS = {
   API_BASE_URL: 'https://nodejs-nokta.vercel.app/api'
+  // API_BASE_URL: 'http://localhost:3000/api'
 }
 
 export const API_ENDPOINTS = {

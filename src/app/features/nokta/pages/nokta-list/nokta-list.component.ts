@@ -1,15 +1,18 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../../../auth/services/auth.service';
 import { NoktaService } from '../../services/nokta.service';
 import { Nokta } from '../../models/nokta';
+import { NotificationService } from '../../../../core';
 
 @Component({
   selector: 'app-nokta-list',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, FormsModule],
   templateUrl: './nokta-list.component.html',
   styleUrl: './nokta-list.component.css'
 })
@@ -18,6 +21,10 @@ export class NoktaListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly noktaService = inject(NoktaService);
+  private readonly notification = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private searchSubject = new Subject<string>();
 
   isModalOpen: boolean = false;
   isLoading: boolean = false;
@@ -27,13 +34,23 @@ export class NoktaListComponent implements OnInit {
 
   noktas: Nokta[] = [];
   noktaId: string = '';
+  searchTerm: string = '';
 
   ngOnInit(): void {
     this.getAll();
+    this.searchSubject
+    .pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe(search => {
+      this.getAll(search);
+    });
   }
 
-  getAll(): void {
-    this.noktaService.getAll().subscribe({
+  getAll(search: string = ''): void {
+    this.noktaService.getAll(search).subscribe({
       next: (res) => {
         console.log(res);
         this.noktas = res.data;
@@ -75,6 +92,7 @@ export class NoktaListComponent implements OnInit {
         this.isLoading = false;
         this.closeModal();
         this.getAll();
+        this.notification.success(res.message);
       },
       error: (err) => {
         console.log(err);
@@ -161,5 +179,9 @@ export class NoktaListComponent implements OnInit {
         this.isLoading = false;
       }
     })
+  }
+
+  onSearch(): void {
+    this.searchSubject.next(this.searchTerm);
   }
 }

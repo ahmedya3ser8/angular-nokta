@@ -27,6 +27,10 @@
         فرح جديد
       </button>
     </div>
+    <!-- SEATCH INPUT -->
+    <div class="max-w-sm">
+      <input type="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" class="floating-input" placeholder="ابحث بالاسم..." />
+    </div>
     <!-- TABLE -->
     <div class="bg-white rounded-2xl shadow-xl shadow-rose-950/5 overflow-hidden">
       <table class="w-full text-sm">
@@ -99,7 +103,13 @@
                 </div>
               </td>
             </tr>
-          }
+          } @empty {
+            <tr>
+              <td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">
+                مفيش نتايج لـ "زيزو"
+              </td>
+            </tr>
+        }
         </tbody>
       </table>
     </div>
