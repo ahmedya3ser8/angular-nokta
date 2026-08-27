@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 
 import { NoktaListComponent } from "./pages/nokta-list/nokta-list.component";
 import { PersonDetailsComponent } from "./pages/person-details/person-details.component";
+import { personDetailsResolver } from "./resolvers/person-details.resolver";
 
 export const NOKTA_ROUTES: Routes = [
   {
@@ -17,6 +18,7 @@ export const NOKTA_ROUTES: Routes = [
   {
     path: 'person/:id',
     component: PersonDetailsComponent,
+    resolve: { data: personDetailsResolver },
     title: 'نقوط — تفاصيل النقطة'
   }
 ];

@@ -28,13 +28,14 @@ export class NoktaListComponent implements OnInit {
 
   isModalOpen: boolean = false;
   isLoading: boolean = false;
+  isLoadingNoktas: boolean = false;
   isEditMode: boolean = false;
-
+  isDeleting: boolean = false;
   form!: FormGroup;
-
   noktas: Nokta[] = [];
   noktaId: string = '';
   searchTerm: string = '';
+  noktaToDelete: Nokta | null = null;
 
   ngOnInit(): void {
     this.getAll();
@@ -50,13 +51,16 @@ export class NoktaListComponent implements OnInit {
   }
 
   getAll(search: string = ''): void {
+    this.isLoadingNoktas = true;
     this.noktaService.getAll(search).subscribe({
       next: (res) => {
         console.log(res);
         this.noktas = res.data;
+        this.isLoadingNoktas = false;
       },
       error: (err) => {
         console.log(err);
+        this.isLoadingNoktas = false;
       }
     })
   }
@@ -142,19 +146,6 @@ export class NoktaListComponent implements OnInit {
     this.fillForm(nokta);
   }
 
-  onDelete(noktaId: string): void {
-    console.log(noktaId);
-    this.noktaService.remove(noktaId).subscribe({
-      next: (res) => {
-        console.log(res);
-        this.getAll();
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
-  }
-
   fillForm(nokta: Nokta): void {
     this.form.patchValue({
       personName: nokta.person.name,
@@ -183,5 +174,31 @@ export class NoktaListComponent implements OnInit {
 
   onSearch(): void {
     this.searchSubject.next(this.searchTerm);
+  }
+
+  onDelete(nokta: Nokta): void {
+    this.noktaToDelete = nokta;
+  }
+
+  cancelDelete(): void {
+    this.noktaToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.noktaToDelete) return;
+    this.isDeleting = true;
+    this.noktaService.remove(this.noktaToDelete._id).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.isDeleting = false;
+        this.noktaToDelete = null;
+        this.getAll();
+        this.notification.success(res.message);
+      },
+      error: (err) => {
+        console.log(err);
+        this.isDeleting = false;
+      }
+    })
   }
 }
